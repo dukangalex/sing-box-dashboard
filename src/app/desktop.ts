@@ -69,6 +69,32 @@ export interface DesktopProfilePatch {
   autoUpdateIntervalMinutes?: number;
 }
 
+// A chain is an ordered list of outbound tags already present in a
+// profile's base config. Applied at service-start time via detour
+// chaining — see profileChains.ts on the Electron side.
+export interface DesktopProfileChain {
+  id: string;
+  profileId: string;
+  name: string;
+  hops: string[];
+}
+
+export interface DesktopProfileChainCreate {
+  profileId: string;
+  name: string;
+  hops: string[];
+}
+
+export interface DesktopProfileChainPatch {
+  name?: string;
+  hops?: string[];
+}
+
+export interface DesktopProfileChainableOutbound {
+  tag: string;
+  type: string;
+}
+
 export interface DesktopCrashReport {
   name: string;
   crashedAt: number;
@@ -319,6 +345,15 @@ export interface DesktopHost {
     exportData(id: string): Promise<boolean>;
     encodeData(id: string): Promise<Uint8Array>;
   };
+  profileChains: {
+    list(profileId: string): Promise<DesktopProfileChain[]>;
+    listChainableOutbounds(profileId: string): Promise<DesktopProfileChainableOutbound[]>;
+    create(init: DesktopProfileChainCreate): Promise<DesktopProfileChain>;
+    update(id: string, patch: DesktopProfileChainPatch): Promise<void>;
+    remove(id: string): Promise<void>;
+    reorder(profileId: string, ids: string[]): Promise<void>;
+    onChanged(listener: (profileId: string) => void): () => void;
+  };
   settings: {
     get(): Promise<DesktopSettingsState>;
     setSpeedMode(mode: DesktopSpeedMode): Promise<void>;
@@ -493,4 +528,38 @@ export function useDesktopProfiles(host: DesktopHost): DesktopProfilesState {
   }, [host]);
 
   return state;
+}
+
+export function useProfileChains(host: DesktopHost, profileId: string | null): DesktopProfileChain[] {
+  const [chains, setChains] = useState<DesktopProfileChain[]>([]);
+
+  useEffect(() => {
+    if (profileId === null) {
+      setChains([]);
+      return;
+    }
+    let stale = false;
+    const reload = () => {
+      host.profileChains
+        .list(profileId)
+        .then((value) => {
+          if (!stale) {
+            setChains(value);
+          }
+        })
+        .catch(showError);
+    };
+    reload();
+    const unsubscribe = host.profileChains.onChanged((changedProfileId) => {
+      if (changedProfileId === profileId) {
+        reload();
+      }
+    });
+    return () => {
+      stale = true;
+      unsubscribe();
+    };
+  }, [host, profileId]);
+
+  return chains;
 }

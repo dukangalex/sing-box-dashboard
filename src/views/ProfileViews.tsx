@@ -25,6 +25,7 @@ import {
   Toggle,
 } from "../components/ui";
 import { ProfileQRSDialog } from "./ProfileQRSDialog";
+import { ChainsDialog } from "./ChainsView";
 import styles from "./ProfileViews.module.css";
 import { cx } from "../lib/cx";
 import { createCheckScheduler, type CheckScheduler } from "../lib/checkScheduler";
@@ -138,6 +139,7 @@ export function ProfileCard(props: { host: DesktopHost }) {
   const [editing, setEditing] = useState(false);
   const [showingQR, setShowingQR] = useState(false);
   const [showingQRS, setShowingQRS] = useState(false);
+  const [chainsOpen, setChainsOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [importRequest, setImportRequest] = useState<{
     fileName: string;
@@ -203,6 +205,9 @@ export function ProfileCard(props: { host: DesktopHost }) {
                 <IconButton title={t("Edit")} onClick={() => setEditing(true)}>
                   <Icon name="edit" size={16} />
                 </IconButton>
+                <IconButton title={t("Chains")} onClick={() => setChainsOpen(true)}>
+                  <Icon name="route" size={16} />
+                </IconButton>
                 {selected.type === "remote" && (
                   <IconButton title={t("Update")} disabled={updating} onClick={updateRemote}>
                     <span className={updating ? styles.spin : undefined}>
@@ -240,6 +245,9 @@ export function ProfileCard(props: { host: DesktopHost }) {
       )}
       {showingQRS && selected !== null && (
         <ProfileQRSDialog host={host} profile={selected} onClose={() => setShowingQRS(false)} />
+      )}
+      {chainsOpen && selected !== null && (
+        <ChainsDialog host={host} profile={selected} onClose={() => setChainsOpen(false)} />
       )}
     </Card>
   );
