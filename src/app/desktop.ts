@@ -168,6 +168,37 @@ export interface DesktopSettingsState {
   powerReportEnabled: boolean;
 }
 
+export interface DesktopCloudBackupAccount {
+  url: string;
+  user: string;
+  password: string;
+  remoteFile: string;
+}
+
+export interface DesktopOverlayFlags {
+  chinaDirect: boolean;
+  adsBlock: boolean;
+  strictRoute: boolean;
+  dnsProtect: boolean;
+  disableIpv6: boolean;
+  disableQuic: boolean;
+  excludeCnQuic: boolean;
+  webrtcProtect: boolean;
+  onDemand: boolean;
+  configNormalize: boolean;
+  autoRedirect: boolean;
+}
+
+export interface DesktopCloudBackupSnapshot {
+  account: DesktopCloudBackupAccount;
+  overlay: DesktopOverlayFlags;
+}
+
+export interface DesktopCloudBackupRestoreResult {
+  imported: number;
+  skipped: number;
+}
+
 export type DesktopTerminalContextMenuResult =
   | { action: "copy" }
   | { action: "paste"; text: string }
@@ -366,6 +397,16 @@ export interface DesktopHost {
     setPowerReportEnabled(value: boolean): Promise<void>;
     cacheSize(): Promise<number>;
     clearCache(): Promise<void>;
+  };
+  cloudBackup: {
+    get(): Promise<DesktopCloudBackupSnapshot>;
+    saveAccount(account: DesktopCloudBackupAccount): Promise<void>;
+    saveOverlay(flags: DesktopOverlayFlags): Promise<void>;
+    probe(): Promise<boolean>;
+    upload(): Promise<void>;
+    download(compat: boolean): Promise<DesktopCloudBackupRestoreResult>;
+    exportFile(): Promise<boolean>;
+    importFile(compat: boolean): Promise<DesktopCloudBackupRestoreResult | null>;
   };
   updates: {
     state(): Promise<DesktopUpdatesState>;

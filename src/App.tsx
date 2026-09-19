@@ -79,7 +79,7 @@ import {
   powerReportFileDisplayName,
   powerReportTitle,
 } from "./views/reportFormat";
-import { OverviewView } from "./views/OverviewView";
+import { CloudBackupView } from "./views/CloudBackupView";
 import {
   ImportProfileFileDialog,
   ImportRemoteProfileDialog,
@@ -132,6 +132,7 @@ export type Route =
   | { page: "tools/openvpn"; tag: string }
   | { page: "settings" }
   | { page: "settings/app" }
+  | { page: "settings/backup" }
   | { page: "settings/core" }
   | { page: "settings/preferences" }
   | { page: "settings/preferences/terminal" }
@@ -250,6 +251,8 @@ function routeFromHash(locationHash: string): Route {
       switch (segments[1]) {
         case "app":
           return { page: "settings/app" };
+        case "backup":
+          return { page: "settings/backup" };
         case "core":
           return { page: "settings/core" };
         case "preferences":
@@ -352,6 +355,8 @@ function routeTitle(route: Route, t: Translate, language: string): string {
       return t("Settings");
     case "settings/app":
       return t("App");
+    case "settings/backup":
+      return t("Cloud Backup");
     case "settings/core":
       return t("Core");
     case "settings/preferences":
@@ -900,6 +905,7 @@ function ShellContent(props: ShellProps & { onRetry: () => void }) {
         <PowerReportFileView name={route.name} file={route.file} recordedAt={route.recordedAt} />
       )}
       {route.page === "settings" && <SettingsView />}
+      {route.page === "settings/backup" && <CloudBackupView />}
       {route.page === "settings/app" && (
         <AppSettingsView
           theme={props.theme}

@@ -59,6 +59,13 @@ export function SettingsView() {
           )}
           {localHost !== null && (
             <NavRow
+              icon="sync"
+              title={t("Cloud Backup")}
+              onClick={() => navigate("settings/backup")}
+            />
+          )}
+          {localHost !== null && (
+            <NavRow
               icon="memory"
               title={t("Core")}
               onClick={() => navigate("settings/core")}
