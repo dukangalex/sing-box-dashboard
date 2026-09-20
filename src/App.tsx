@@ -385,7 +385,7 @@ function EndpointToolbarTitle<T>(props: {
   return props.count(status.data) > 1 && props.tag !== "" ? props.taggedTitle : props.title;
 }
 
-const DESKTOP_LOCAL_SERVER: Server = { id: "local", name: "sing-box", url: "", secret: "" };
+const DESKTOP_LOCAL_SERVER: Server = { id: "local", name: "AngelaBox", url: "", secret: "" };
 const DESKTOP_ACTIVE_KEY = "desktop-active-server";
 
 export function App(props: { desktop?: DesktopHost } = {}) {
@@ -517,6 +517,7 @@ function WebApp() {
 
 function DesktopApp(props: { host: DesktopHost }) {
   const host = props.host;
+  const { t } = useI18n();
   const state = useAppState(host);
   const connection = useDaemonConnection(host);
   const connectionResolvedOnce = useRef(false);
@@ -577,6 +578,7 @@ function DesktopApp(props: { host: DesktopHost }) {
         <div className={styles.desktopRoot}>
           <div className={styles.desktopConnectingView}>
             <Spinner className={styles.connectingSpinner} />
+            <div>{t("Connecting...")}</div>
           </div>
         </div>
       );
@@ -948,7 +950,7 @@ function ShellContent(props: ShellProps & { onRetry: () => void }) {
             >
               <Icon name={menuOpen ? "close" : "menu"} size={18} />
             </IconButton>
-            <div className={styles.mobileTopbarBrand}>sing-box</div>
+            <div className={styles.mobileTopbarBrand}>AngelaBox</div>
           </header>
         )}
         {menuOpen && (
@@ -963,7 +965,7 @@ function ShellContent(props: ShellProps & { onRetry: () => void }) {
           <nav className={styles.sidebar}>
             <div className={styles.sidebarTitlebar} />
             <div className={styles.sidebarBrand}>
-              sing-box
+              AngelaBox
               {serverInfo && <span className={styles.sidebarBrandVersion}>{serverInfo.version}</span>}
             </div>
             {started ? (
@@ -980,7 +982,7 @@ function ShellContent(props: ShellProps & { onRetry: () => void }) {
         ) : (
           <nav className={cx(styles.sidebar, menuOpen && styles.open)}>
             <div className={styles.sidebarBrand}>
-              sing-box
+              AngelaBox
               {serverInfo && <span className={styles.sidebarBrandVersion}>{serverInfo.version}</span>}
             </div>
             {navItem("overview", t("Overview"), "dashboard", route.page === "overview")}
