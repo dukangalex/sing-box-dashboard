@@ -183,8 +183,8 @@
 }
 
 .connecting-spinner {
-  width: 21px;
-  height: 21px;
+  width: 28px;
+  height: 28px;
 }
 
 .desktop-connecting-view {
@@ -193,8 +193,11 @@
   flex: 1;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background: var(--bg);
+  gap: 16px;
+  min-height: 100%;
+  color: var(--text, #e6e6e6);
+  background: var(--bg, #1e1e1e);
+  font-size: 15px;
 }
 
 .desktop-root {

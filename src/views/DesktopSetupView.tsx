@@ -130,7 +130,7 @@ export function DesktopSetupView(props: {
               ) : (
                 <Button
                   variant="primary"
-                  disabled={connecting}
+                  disabled={repairing}
                   onClick={() => host.daemon.retryConnection()}
                 >
                   {connecting && <Spinner />}

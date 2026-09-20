@@ -521,12 +521,19 @@ function DesktopApp(props: { host: DesktopHost }) {
   const state = useAppState(host);
   const connection = useDaemonConnection(host);
   const connectionResolvedOnce = useRef(false);
+  const [, setConnectingElapsed] = useState(0);
   const connectionHasResolved =
     connection.phase !== "connecting" || connectionResolvedOnce.current;
   useEffect(() => {
     if (connection.phase !== "connecting") {
       connectionResolvedOnce.current = true;
+      return;
     }
+    const timer = window.setTimeout(() => {
+      connectionResolvedOnce.current = true;
+      setConnectingElapsed((value) => value + 1);
+    }, 5000);
+    return () => window.clearTimeout(timer);
   }, [connection.phase]);
   const [activeId, setActiveId] = useState<string>(
     () => loadStoredString(DESKTOP_ACTIVE_KEY) ?? DESKTOP_LOCAL_SERVER.id,
@@ -577,6 +584,7 @@ function DesktopApp(props: { host: DesktopHost }) {
       return (
         <div className={styles.desktopRoot}>
           <div className={styles.desktopConnectingView}>
+            <Brand product={null} />
             <Spinner className={styles.connectingSpinner} />
             <div>{t("Connecting...")}</div>
           </div>
@@ -811,7 +819,9 @@ function ShellContent(props: ShellProps & { onRetry: () => void }) {
     if (host !== null) {
       return (
         <div className={styles.desktopConnectingView}>
+          <Brand product={null} />
           <Spinner className={styles.connectingSpinner} />
+          <div>{t("Connecting...")}</div>
         </div>
       );
     }
