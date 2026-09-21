@@ -388,11 +388,12 @@ function EndpointToolbarTitle<T>(props: {
 const DESKTOP_LOCAL_SERVER: Server = { id: "local", name: "AngelaBox", url: "", secret: "" };
 const DESKTOP_ACTIVE_KEY = "desktop-active-server";
 
+function markAppReady() {
+  document.body.classList.add("app-ready");
+}
+
 export function App(props: { desktop?: DesktopHost } = {}) {
   const desktop = props.desktop ?? null;
-  useEffect(() => {
-    document.body.classList.add("app-ready");
-  }, []);
   return (
     <I18nProvider>
       <DesktopHostContext.Provider value={desktop}>
@@ -475,6 +476,9 @@ function useAppState(desktop: DesktopHost | null = null) {
 
 function WebApp() {
   const state = useAppState();
+  useEffect(() => {
+    markAppReady();
+  }, []);
 
   const activeServer =
     state.serversState.servers.find((server) => server.id === state.serversState.activeId) ?? null;
@@ -545,6 +549,12 @@ function DesktopApp(props: { host: DesktopHost }) {
   useEffect(() => {
     document.body.dataset.platform = host.platform;
   }, [host]);
+
+  useEffect(() => {
+    if (connectionHasResolved || state.route.page === "profile-editor") {
+      markAppReady();
+    }
+  }, [connectionHasResolved, state.route.page]);
 
   const selectServer = (id: string) => {
     saveStoredString(DESKTOP_ACTIVE_KEY, id);
