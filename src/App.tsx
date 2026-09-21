@@ -390,6 +390,9 @@ const DESKTOP_ACTIVE_KEY = "desktop-active-server";
 
 export function App(props: { desktop?: DesktopHost } = {}) {
   const desktop = props.desktop ?? null;
+  useEffect(() => {
+    document.body.classList.add("app-ready");
+  }, []);
   return (
     <I18nProvider>
       <DesktopHostContext.Provider value={desktop}>
@@ -532,7 +535,7 @@ function DesktopApp(props: { host: DesktopHost }) {
     const timer = window.setTimeout(() => {
       connectionResolvedOnce.current = true;
       setConnectingElapsed((value) => value + 1);
-    }, 5000);
+    }, 2000);
     return () => window.clearTimeout(timer);
   }, [connection.phase]);
   const [activeId, setActiveId] = useState<string>(
